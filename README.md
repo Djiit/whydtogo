@@ -17,8 +17,7 @@ For development usage use `whydtogo/__init__.py --help`
 
 ### All platforms
 
-You will have to use this project form sources.
-In a terminal, just type :
+You will have to use this project form sources. In a terminal, just type :
 
 ```bash
 git clone git@github.com:Djiit/whydtogo.git

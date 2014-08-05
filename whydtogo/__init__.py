@@ -18,8 +18,8 @@ __author__ = "Julien Tanay"
 
 from docopt import docopt
 
-from whydtogo.scraper import Scraper
-from whydtogo.settings import settings
+from scraper import Scraper
+import settings
 
 
 def main():
