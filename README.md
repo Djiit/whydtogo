@@ -1,10 +1,14 @@
 # Whyd to go
 
-"Take your Whyd playlists away". This is a very cheap and simple CLI wrapper around youtube-dl for Whyd, using BeautifulSoup4 and docopt.
+"Take your Whyd playlists away."
+
+This is a very cheap and simple CLI wrapper around youtube-dl for Whyd using BeautifulSoup4 and docopt.
 
 ## Usage
 
-Check the built-in help message : `python main.py -h`
+Check the built-in help message : `whydtogo --help`
+
+For development usage use `whydtogo/__init__.py --help`
 
 ## Installation
 
@@ -14,15 +18,14 @@ Check the built-in help message : `python main.py -h`
 ### All platforms
 
 You will have to use this project form sources.
-
-In a terminal, juste type :
+In a terminal, just type :
 
 ```bash
-git clone
+git clone git@github.com:Djiit/whydtogo.git
 cd whydtogo
-pip install -r requirements.pip
+python setup.py install
 ```
 
-## Licence
+## License
 
-See [LICENCE](./LICENCE)
+See [LICENSE](./LICENSE)
