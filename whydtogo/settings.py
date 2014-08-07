@@ -1,3 +1,4 @@
+# -*- coding: utf8 -*-
 """ Whydtogo Settings module."""
 
 # Default output format
@@ -6,7 +7,7 @@ YDL_PARAMS = {
 }
 
 #!!DEV Use Browser ? (Selenium)
-USE_BROWSER = False
+USE_BROWSER = True
 
 # Classes to look for.
 CLASSES = [
@@ -16,3 +17,7 @@ CLASSES = [
 
 # Used to target "Load More" button.
 LOAD_MORE = 'btnLoadMore'
+
+DEBUG = False
+
+DISPLAY = DEBUG
