@@ -2,11 +2,12 @@
 """Whyd To Go - Take your Whyd playlists away.
 
 Usage:
-  whydtogo user <username>...
-  whydtogo playlist <url>...
+  whydtogo user <username> [-l]
+  whydtogo playlist <url>... [-l]
 
 Options:
   -h --help          Show this message
+  -l --list          Print tracks links; do not download them.
   -d --debug         Enable debug mode
   <username>         Username to scrap.
   <url>              URL to parse.
@@ -14,8 +15,10 @@ Options:
 JT - 2014
 """
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "Julien Tanay"
+
+import logging
 
 from docopt import docopt
 
@@ -26,11 +29,30 @@ import settings
 def main():
     """ Main Whyd To Go CLI entry point."""
     args = docopt(__doc__)
+    print(args)
     wtg = Scraper(settings)
-    for url in args['<url>']:
-        for link in wtg.get_links(url):
-            wtg.download(link, wtg.get_playlist_title())
 
+    if args['user']:
+        for url in wtg.get_playlists(args['<username>']):
+            title = wtg.get_playlist_title(url)
+            print(title)
+
+            for link in wtg.get_links(url):
+                if not args['--list']:
+                    wtg.download(link, wtg.get_playlist_title())
+                else:
+                    print(link)
+
+    elif args['playlist']:
+        for url in args['<url>']:
+            title = wtg.get_playlist_title(url)
+            print(title)
+
+            for link in wtg.get_links(url):
+                if not args['--list']:
+                    wtg.download(link, wtg.get_playlist_title())
+                else:
+                    print(link)
 
 if __name__ == '__main__':
     main()

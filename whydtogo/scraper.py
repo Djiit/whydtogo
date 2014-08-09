@@ -15,9 +15,6 @@ from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from ghost import Ghost
 from ghost.ghost import TimeoutError
-# ghost = Ghost()
-# page, extra_resources = ghost.open("http://jeanphix.me")
-# assert page.http_status==200 and 'jeanphix' in ghost.content
 
 
 class Scraper(object):
@@ -49,7 +46,9 @@ class Scraper(object):
         """
         playlists = []
         soup = self._make_soup('https://whyd.com/' + username + '/playlists')
-        # TODO
+        pl_tag = soup.find('ul', id='playlists')
+        for li in pl_tag.find_all('li'):
+            playlists.append(self.settings.ROOT_URL + li.a['href'])
         return playlists
 
     def get_links(self, url):
@@ -60,7 +59,7 @@ class Scraper(object):
         links = []
         soup = self._make_soup(url)
         total_tracks = int(soup.find('div', class_='postsHeader').span.text.split()[0])
-        print(total_tracks, total_tracks // 20)
+        logging.debug('Found %d tracks, loading %d more times.' % (total_tracks, total_tracks // 20))
 
         try:
             for _ in range(total_tracks // 20):
@@ -74,11 +73,13 @@ class Scraper(object):
             for class_name in self.settings.CLASSES:
                 for tag in soup.find_all('a', class_=class_name):
                     links.append(tag['href'].split('#')[0])
-        print(len(links), links)
         return links
 
-    def get_playlist_title(self):
-        soup = BeautifulSoup(self.browser.content)
+    def get_playlist_title(self, url=None):
+        if url:
+            soup = BeautifulSoup(urlopen(url).read())
+        else:
+            soup = BeautifulSoup(self.browser.content)
         if soup:
             return soup.find('h1').string
 
