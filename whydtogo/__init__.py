@@ -2,8 +2,8 @@
 """Whyd To Go - Take your Whyd playlists away.
 
 Usage:
-  whydtogo user <username> [-l]
-  whydtogo playlist <url>... [-l]
+  whydtogo user <username> [-l, -d]
+  whydtogo playlist <url>... [-l, -d]
 
 Options:
   -h --help          Show this message
@@ -29,8 +29,14 @@ import settings
 def main():
     """ Main Whyd To Go CLI entry point."""
     args = docopt(__doc__)
-    print(args)
     wtg = Scraper(settings)
+
+    if args['--debug']:
+        settings.DEBUG = True
+
+    if settings.DEBUG:
+        logger = logging.getLogger()
+        logger.setLevel(logging.DEBUG)
 
     if args['user']:
         for url in wtg.get_playlists(args['<username>']):
