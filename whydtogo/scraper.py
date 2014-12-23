@@ -37,12 +37,13 @@ class Scraper(object):
                                  download_images=False)
 
     def _make_soup(self, url):
-        """ Helper to make a BeautifulSoup object."""
+        """ Helper to make a BeautifulSoup object.
+
+            :param url: URL de la page à parser.
+        """
         try:
             if self.settings.USE_BROWSER:
-                print('before opening')
                 self.browser.open(url)
-                print('after opening')
                 return BeautifulSoup(self.browser.content)
             else:
                 return BeautifulSoup(urlopen(url).read())
@@ -98,7 +99,6 @@ class Scraper(object):
             os.mkdir('output')
         except OSError:
             pass
-
         # playlist specific folder
         try:
             os.mkdir(outdir)
@@ -117,8 +117,8 @@ class Scraper(object):
         """ Evaluate 'loadMore()' in the Ghost.py browser to get all the traks."""
         total_tracks = int(soup.find('div', class_='postsHeader')
                                .span.text.split()[0])
-        print('Found %d tracks, loading %d more times.'
-                      % (total_tracks, total_tracks // 20))
+        logging.info('Found %d tracks, loading %d more times.'
+                     % (total_tracks, total_tracks // 20))
         try:
             for _ in range(total_tracks // 20):
                 self.browser.evaluate('loadMore();', expect_loading=True)
