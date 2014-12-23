@@ -7,7 +7,7 @@ YDL_PARAMS = {
 }
 
 #!!DEV Use Browser ? (Selenium)
-USE_BROWSER = False
+USE_BROWSER = True
 
 # Whyd root URL
 ROOT_URL = 'https://whyd.com'
