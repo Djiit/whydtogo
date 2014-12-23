@@ -10,7 +10,7 @@ Check the built-in help message : `whydtogo --help`
 
 For development usage use `python whydtogo/__init__.py --help`
 
-## Installation
+## Dependencies
 
 You will need (obviously) Python 3.X and pip. Python 3.4 comes bundled with pip.
 For Python 3.2 or 3.3, check how to install pip here : https://pip.pypa.io/en/latest/installing.html .
@@ -19,29 +19,22 @@ For Python 3.2 or 3.3, check how to install pip here : https://pip.pypa.io/en/la
 
 Install PySide binaries from http://pyside.readthedocs.org/en/latest/installing/windows.html
 
-Then, in a terminal :
-
-```bash
-git clone git@github.com:Djiit/whydtogo.git
-cd whydtogo
-pip install -r requirements.txt
-```
-
 ### Linux
 
 Build PySide from sources (http://pyside.readthedocs.org/en/latest/building/linux.html)
 
-Then, in a terminal :
+## Installation (all platforms)
+
+In a terminal, type :
 
 ```bash
 git clone git@github.com:Djiit/whydtogo.git
 cd whydtogo
 pip install -r requirements.txt
-python setup.py install
 ```
-### System-wide Installation (all platforms)
 
-To use Whydtogo as a CLI program, run :
+To install WhydToGo on your system and use it as a standalone CLI program :
+
 ```bash
 python setup.py install
 ```
