@@ -94,19 +94,14 @@ class Scraper(object):
             :param url: Lien vers la track.
             :param outdir: Dossier de destination.
         """
-        # output root folder
-        try:
-            os.mkdir('output')
-        except OSError:
-            pass
         # playlist specific folder
         try:
-            os.mkdir('output/%s' % outdir)
-            logging.info('output/%s created.' % outdir)
+            os.mkdir(outdir)
+            logging.info('%s created.' % outdir)
         except OSError:
             logging.info('output directory already exists, skipping creation.')
 
-        self.ydl.params['outtmpl'] = 'output/' + outdir + '/%(title)s.%(ext)s"'
+        self.ydl.params['outtmpl'] = outdir + '/%(title)s.%(ext)s"'
         try:
             self.ydl.extract_info(url, download=True)
         except DownloadError as e:
