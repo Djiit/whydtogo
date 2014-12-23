@@ -101,7 +101,7 @@ class Scraper(object):
             pass
         # playlist specific folder
         try:
-            os.mkdir(outdir)
+            os.mkdir('output/%s' % outdir)
             logging.info('output/%s created.' % outdir)
         except OSError:
             logging.info('output directory already exists, skipping creation.')
