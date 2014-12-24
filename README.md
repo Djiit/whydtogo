@@ -10,6 +10,8 @@ Check the built-in help message : `whydtogo --help`
 
 For development usage use `python whydtogo/__init__.py --help`
 
+To get more than 20 tracks per playlists, use the `-x` option.
+
 ## Dependencies
 
 You will need (obviously) Python 3.X and pip. Python 3.4 comes bundled with pip.
