@@ -45,7 +45,7 @@ def main():
 
             for link in wtg.get_links(url):
                 if not args['--list']:
-                    wtg.download(link, wtg.get_playlist_title())
+                    wtg.download(link, title)
                 else:
                     print(link)
 
@@ -56,7 +56,7 @@ def main():
 
             for link in wtg.get_links(url):
                 if not args['--list']:
-                    wtg.download(link, wtg.get_playlist_title())
+                    wtg.download(link, title)
                 else:
                     print(link)
 
