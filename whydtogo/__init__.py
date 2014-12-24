@@ -2,20 +2,19 @@
 """Whyd To Go - Take your Whyd playlists away.
 
 Usage:
-  whydtogo user <username> [-l, -d]
-  whydtogo playlist <url>... [-l, -d]
+  whydtogo user <username> [-l, -d, -x]
+  whydtogo playlist <url>... [-l, -d, -x]
 
 Options:
   -h --help          Show this message
-  -l --list          Print tracks links; do not download them.
+  <username>         Username to scrap
+  <url>              URL to parse
+  -l --list          Print tracks links; do not download them
   -d --debug         Enable debug mode
-  <username>         Username to scrap.
-  <url>              URL to parse.
-
-JT - 2014
+  -x --extratracks   Use Ghost.py browser to parse more than 20 tracks
 """
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 __author__ = "Julien Tanay"
 
 import logging
@@ -29,7 +28,9 @@ import settings
 def main():
     """ Main Whyd To Go CLI entry point."""
     args = docopt(__doc__)
-    wtg = Scraper(settings)
+
+    if args['--extratracks']:
+        settings.USE_BROWSER = True
 
     if args['--debug']:
         settings.DEBUG = True
@@ -37,6 +38,8 @@ def main():
     if settings.DEBUG:
         logger = logging.getLogger()
         logger.setLevel(logging.DEBUG)
+
+    wtg = Scraper(settings)
 
     if args['user']:
         for url in wtg.get_playlists(args['<username>']):

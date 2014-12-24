@@ -3,7 +3,12 @@
 
 # Default output format
 YDL_PARAMS = {
-    'outtmpl': '%(title)s.%(ext)s',
+    'outtmpl': '%(title)s.%(ext)s', # overwritten in scraper.py
+    'nooverwrites': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '256',}]
 }
 
 #!!DEV Use Browser ? (Selenium)
@@ -17,10 +22,6 @@ CLASSES = [
     'via youtube',
     'via soundcloud',
 ]
-
-# CSS class used to target "Load More" button. ##UNUSED
-LOAD_MORE = 'btnLoadMore'
-
 
 # Enable DEBUG mode. Usefull for development.
 DEBUG = False

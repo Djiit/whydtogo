@@ -13,7 +13,9 @@ For development usage use `python whydtogo/__init__.py --help`
 ## Dependencies
 
 You will need (obviously) Python 3.X and pip. Python 3.4 comes bundled with pip.
-For Python 3.2 or 3.3, check how to install pip here : https://pip.pypa.io/en/latest/installing.html .
+For Python 3.2 or 3.3, check how to install pip here : https://pip.pypa.io/en/latest/installing.html.
+
+Optional : to extract audio from YouTube videos, you will also need avconv of ffmpeg (check how to download ffmpeg here : https://www.ffmpeg.org/download.html)
 
 ### Windows
 
@@ -22,6 +24,9 @@ Install PySide binaries from http://pyside.readthedocs.org/en/latest/installing/
 ### Linux
 
 Build PySide from sources (http://pyside.readthedocs.org/en/latest/building/linux.html)
+
+Optional : To use the ffmpeg extractor, you will need to install `libav-tools` (tested on Ubuntu)
+
 
 ## Installation (all platforms)
 
