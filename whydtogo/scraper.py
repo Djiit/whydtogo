@@ -86,7 +86,7 @@ class Scraper(object):
         else:
             soup = BeautifulSoup(self.browser.content)
         if soup:
-            return soup.find('h1').string
+            return soup.find(class_='feedHeader').h1.string
 
     def download(self, url, outdir):
         """ Télécharge la version audio d'un lien.
