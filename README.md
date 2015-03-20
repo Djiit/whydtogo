@@ -1,7 +1,10 @@
 # Whyd to go
 
-"Take your Whyd playlists away."
+[![Build Status](https://travis-ci.org/Djiit/whydtogo.svg)](https://travis-ci.org/Djiit/whydtogo) [![Coverage Status](https://coveralls.io/repos/Djiit/whydtogo/badge.svg)](https://coveralls.io/r/Djiit/whydtogo)
 
+## About
+
+"Take your Whyd playlists away."
 This is a very cheap and simple CLI wrapper around youtube-dl for Whyd using BeautifulSoup4 and docopt.
 
 ## Usage
