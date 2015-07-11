@@ -2,98 +2,132 @@
 """Scraper class used to retrieve Whyd source links and download audio tracks.
 """
 
-try:
-    from urllib.request import urlopen
-except:
-    from urllib2 import urlopen
-
 import logging
 import os
-from time import sleep
 
 from bs4 import BeautifulSoup
 from youtube_dl import YoutubeDL
 from youtube_dl.utils import DownloadError
+import requests
 
-try:
-    from ghost import Ghost
-    from ghost.ghost import TimeoutError
-except:
-    logging.info('Ghost implementation not found and/or \
-                  PyQt4/Pyside is missing.')
+# Default output format
+YDL_PARAMS = {
+    'outtmpl': '%(title)s.%(ext)s',
+    'nooverwrites': True,
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '256'}]
+}
+
+# Whyd root URL
+ROOT_URL = 'https://whyd.com'
+YOUTUBE_URL = 'https://youtu.be/'
+SOUNDCLOUD_URL = 'https://soundcloud.com/'
+VIMEO_URL = 'https://vimeo.com/'
+
+PLAYLIST_LIMIT = '300'
 
 
-class Scraper(object):
+class WhydScraper():
+    """ All your tracks are belong to us. """
 
-    def __init__(self, settings):
-        self.settings = settings
-        self.ydl = YoutubeDL(self.settings.YDL_PARAMS)
+    def __init__(self):
+        self.ydl = YoutubeDL(YDL_PARAMS)
         self.ydl.add_default_info_extractors()
-        if self.settings.USE_BROWSER:
-            self.browser = Ghost(display=self.settings.DISPLAY,
-                                 wait_timeout=3600,
-                                 java_enabled=False,
-                                 plugins_enabled=False,
-                                 download_images=False)
 
     def _make_soup(self, url):
         """ Helper to make a BeautifulSoup object.
 
-            :param url: URL de la page à parser.
+            :param url: URL to scrap.
         """
         try:
-            if self.settings.USE_BROWSER:
-                self.browser.open(url)
-                return BeautifulSoup(self.browser.content)
-            else:
-                return BeautifulSoup(urlopen(url).read())
+            return BeautifulSoup(requests.get(url).text)
         except ValueError:
             logging.warning('The URL you provided is not valid : "%s"' % url)
             return None
 
-    def get_playlists(self, username):
-        """ Récupère les playlists d'un utilisateur.
+    def scrap_playlists(self, username):
+        """ Scrap user playlists from his profile page.
 
-            :param username: Nom d'utilisateur.
+            :param username: User name (slug) OR id (/u/xxxx).
         """
-        playlists = []
-        soup = self._make_soup('https://whyd.com/' + username + '/playlists')
-        pl_tag = soup.find('ul', id='playlists')
-        for li in pl_tag.find_all('li'):
-            playlists.append(self.settings.ROOT_URL + li.a['href'])
-        return playlists
+        soup = self._make_soup('{root_url}/{username}/playlists'.format(
+            root_url=ROOT_URL, username=username))
 
-    def get_links(self, url):
-        """ Récupère les liens des tracks d'une page de playlist.
+        pl_tags = soup.find_all('li', class_='playlist')
 
-            :param url: URL de la playlist à parser.
+        return [li.a['href'].split('/')[-1] for li in pl_tags]
+
+    def get_playlist_by_id(self, username, pl_id, limit=PLAYLIST_LIMIT):
+        """ Get tracklist by Username + ID."""
+        res = requests.get(
+            '{root_url}/{username}/playlist/{pl_id}?format=json&limit={limit}'.format(
+                root_url=ROOT_URL, username=username, pl_id=pl_id, limit=limit))
+
+        tracks = self._format_json(res.json())
+        return tracks
+
+    def get_playlist_by_url(self, pl_url, limit=PLAYLIST_LIMIT):
+        """ Get tracklist by URL. """
+        res = requests.get('{url}?format=json&limit={limit}'.format(
+            url=pl_url, limit=limit))
+        tracks = self._format_json(res.json())
+        return tracks
+
+    def _format_json(self, json):
+        """ Parse JSON and return formated dict. """
+        # format urls
+        for track in json:
+            if '/sc/' in track['eId']:
+                track['eId'] = track['eId'].replace('/sc/', SOUNDCLOUD_URL).split('#')[0]
+            elif '/yt/' in track['eId']:
+                track['eId'] = track['eId'].replace('/yt/', YOUTUBE_URL)
+            elif '/vi/' in track['eId']:
+                track['eId'] = track['eId'].replace('/vi/', VIMEO_URL)
+
+            try:
+                playlist = track['pl']['name']
+            except KeyError:
+                playlist = 'None'
+        return [{'playlist': playlist,
+                 'name': track['name'],
+                 'url': track['eId']} for track in json]
+
+    def get_user_stream(self, username, limit='20'):
+        """ Get user tracklist from its added tracks stream.
+
+            :param username: User nickname (slug) OR id (/u/xxxx).
+            :param limit: Maximum number of tracks to retrieve.
         """
-        links = []
-        soup = self._make_soup(url)
+        res = requests.get(
+            '{root_url}/{username}?format=json&limit={limit}'.format(
+                root_url=ROOT_URL, username=username, limit=limit))
 
-        if self.settings.USE_BROWSER:
-            soup = self._load_more(soup)
+        tracks = self._format_json(res.json())
+        return tracks
 
-        if soup:
-            for class_name in self.settings.CLASSES:
-                for tag in soup.find_all('a', class_=class_name):
-                    links.append(tag['href'].split('#')[0])
-        return links
+    def get_user_likes(self, username):
+        """ Get user tracklist from its liked tracks stream.
 
-    def get_playlist_title(self, url=None):
-        if url:
-            soup = BeautifulSoup(urlopen(url).read())
-        else:
-            soup = BeautifulSoup(self.browser.content)
-        if soup:
-            return soup.find(class_='feedHeader').h1.string
-
-    def download(self, url, outdir):
-        """ Télécharge la version audio d'un lien.
-
-            :param url: Lien vers la track.
-            :param outdir: Dossier de destination.
+            :param username: User nickname (slug) OR id (/u/xxxx).
         """
+        res = requests.get(
+            '{root_url}/{username}/likes?format=json'.format(
+                root_url=ROOT_URL, username=username))
+
+        tracks = self._format_json(res.json())
+        return tracks
+
+    def download(self, url, outdir, dry_run=False):
+        """ Download the audio version of a given track url.
+
+            :param url: Track URL.
+            :param outdir: Output directory.
+        """
+        if dry_run:
+            print(url)
+            return
         # output root folder
         try:
             os.mkdir('output')
@@ -111,18 +145,4 @@ class Scraper(object):
             self.ydl.extract_info(url, download=True)
         except DownloadError as e:
             logging.info(e)
-            return 
-
-    def _load_more(self, soup):
-        """ Evaluate 'loadMore()' in the Ghost.py browser to get all the traks."""
-        total_tracks = int(soup.find('div', class_='postsHeader')
-                               .span.text.split()[0])
-        logging.info('Found %d tracks, loading %d more times.'
-                     % (total_tracks, total_tracks // 20))
-        try:
-            for _ in range(total_tracks // 20):
-                self.browser.evaluate('loadMore();', expect_loading=True)
-                sleep(2)
-        except TimeoutError:
-            pass
-        return BeautifulSoup(self.browser.content)
+            return
