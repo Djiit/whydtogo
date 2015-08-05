@@ -1,18 +1,33 @@
-from setuptools import setup, find_packages
-from codecs import open
-from os import path
+import codecs
+import os.path
+import re
+
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
 
 
-here = path.abspath(path.dirname(__file__))
+def fpath(name):
+    return os.path.join(os.path.dirname(__file__), name)
 
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+
+def read(fname):
+    return codecs.open(fpath(fname), encoding='utf-8').read()
+
+
+def grep(attrname):
+    pattern = r"{0}\W*=\W*'([^']+)'".format(attrname)
+    strval, = re.findall(pattern, file_text)
+    return strval
+
+file_text = read(fpath('whydtogo/__init__.py'))
 
 setup(
-    name='Whyd To Go',
-    version='0.1.1',
+    name='WhydToGo',
+    version='0.3.0',
     description='Whyd To Go - Take your Whyd playlists away',
-    long_description=long_description,
+    long_description=read(fpath('README.md')),
     url='https://github.com/Djiit/whydtogo',
     author='Julien Tanay',
     author_email='julien.tanay@gmail.com',
@@ -24,8 +39,9 @@ setup(
         'Programming Language :: Python :: 3.4',
     ],
     keywords='whyd scraping youtube-dl',
-    packages=find_packages(exclude=['contrib', 'docs', 'tests*']),
-    install_requires=['peppercorn'],
+    packages=['whydtogo'],
+    install_requires=read(fpath('requirements.txt')).splitlines(),
+    test_suite="tests",
     entry_points={
         'console_scripts': [
             'whydtogo=whydtogo:main',

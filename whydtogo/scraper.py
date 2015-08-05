@@ -22,10 +22,13 @@ YDL_PARAMS = {
 
 # Whyd root URL
 ROOT_URL = 'https://whyd.com'
+
+# URL used as a replacement
 YOUTUBE_URL = 'https://youtu.be/'
 SOUNDCLOUD_URL = 'https://soundcloud.com/'
 VIMEO_URL = 'https://vimeo.com/'
 
+# Max. tracks to scrap
 PLAYLIST_LIMIT = '300'
 
 

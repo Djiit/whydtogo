@@ -22,8 +22,11 @@ from docopt import docopt
 
 from scraper import WhydScraper
 
-__version__ = "0.3.0"
+
 __author__ = "Julien Tanay"
+
+__version__ = "0.3.0"
+VERSION = __version__
 
 
 def main():
