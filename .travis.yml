@@ -12,3 +12,13 @@ python:
 install: "pip install -e ."
 
 script: py.test
+
+deploy:
+  provider: pypi
+  user: $PYPI_USER
+  password: $PYPI_PASS
+  skip_cleanup: true
+  on:
+    tags: true
+    branch: master
+    python: "3.5"
