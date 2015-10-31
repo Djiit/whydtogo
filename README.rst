@@ -1,7 +1,7 @@
 Whyd to go
 ==========
 
-|Build Status| |Coverage Status|
+|Build Status| |Coverage Status| |PyPI|
 
 About
 -----
