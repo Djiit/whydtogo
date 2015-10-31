@@ -62,3 +62,5 @@ See `LICENSE <./LICENSE>`__
    :target: https://travis-ci.org/Djiit/whydtogo
 .. |Coverage Status| image:: https://coveralls.io/repos/Djiit/whydtogo/badge.svg
    :target: https://coveralls.io/r/Djiit/whydtogo
+.. |PyPI| image:: https://img.shields.io/pypi/v/whydtogo.svg
+   :target: https://pypi.python.org/pypi/whydtogo
