@@ -31,28 +31,27 @@ Don't want to install anything ? Use this automatically generated
 Installation (all platforms)
 ----------------------------
 
-You will need (obviously) Python 3.X and pip. Python 3.4 comes bundled
-with pip. For Python 3.2 or 3.3, check how to install pip here :
+You will need (obviously) Python 3.X up to 3.4 and pip. Python 3.4 comes bundled
+with pip. For earlier Python version, check how to install pip here :
 https://pip.pypa.io/en/latest/installing.html.
 
 Optional : to extract audio from YouTube videos, you will also need
-avconv of ffmpeg (check how to download ffmpeg here :
-https://www.ffmpeg.org/download.html)
+avconv of ffmpeg (check how to download ffmpeg here : https://www.ffmpeg.org/download.html)
 
-In a terminal, type :
+WhydToGo is available on PYPI. Open a terminal and type :
 
 .. code:: bash
 
-    git clone git@github.com:Djiit/whydtogo.git
+    pip install WhydToGo
+
+
+For development purpose, check out the latest version from this repository :
+
+.. code:: bash
+
+    git clone https://github.com/Djiit/whydtogo.git
     cd whydtogo
-    pip install -r requirements.txt
-
-To install WhydToGo on your system and use it as a standalone CLI
-program :
-
-.. code:: bash
-
-    python setup.py install
+    pip install -e .
 
 License
 -------
