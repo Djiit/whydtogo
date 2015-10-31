@@ -28,7 +28,7 @@ from .scraper import WhydScraper
 
 
 __author__ = 'Julien Tanay'
-__version__ = '0.3.4'
+__version__ = '0.3.5'
 VERSION = __version__
 
 
