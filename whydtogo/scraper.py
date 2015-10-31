@@ -1,6 +1,9 @@
 # -*- coding: utf8 -*-
 """Scraper class used to retrieve Whyd source links and download audio tracks.
 """
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from builtins import *
 
 import logging
 import os
@@ -23,16 +26,25 @@ YDL_PARAMS = {
 # Whyd root URL
 ROOT_URL = 'https://whyd.com'
 
-# URL used as a replacement
-YOUTUBE_URL = 'https://youtu.be/'
-SOUNDCLOUD_URL = 'https://soundcloud.com/'
-VIMEO_URL = 'https://vimeo.com/'
+# Supported providers
+PROVIDERS = {
+    'soundcloud': {
+        'prefix': '/sc/',
+        'root_url': 'https://soundcloud.com/'},
+    'youtube': {
+        'prefix': '/yt/',
+        'root_url': 'https://youtu.be/'},
+    'vimeo': {
+        'prefix': '/vi/',
+        'root_url': 'https://vimeo.com/'}
+}
 
 # Max. tracks to scrap
 PLAYLIST_LIMIT = '300'
 
 
 class WhydScraper():
+
     """ All your tracks are belong to us. """
 
     def __init__(self):
@@ -82,12 +94,11 @@ class WhydScraper():
         """ Parse JSON and return formated dict. """
         # format urls
         for track in json:
-            if '/sc/' in track['eId']:
-                track['eId'] = track['eId'].replace('/sc/', SOUNDCLOUD_URL).split('#')[0]
-            elif '/yt/' in track['eId']:
-                track['eId'] = track['eId'].replace('/yt/', YOUTUBE_URL)
-            elif '/vi/' in track['eId']:
-                track['eId'] = track['eId'].replace('/vi/', VIMEO_URL)
+            for e in PROVIDERS:
+                if PROVIDERS[e]['prefix'] in track['eId']:
+                    track['eId'] = track['eId'].replace(
+                        PROVIDERS[e]['prefix'],
+                        PROVIDERS[e]['root_url']).split('#')[0]
 
             try:
                 playlist = track['pl']['name']

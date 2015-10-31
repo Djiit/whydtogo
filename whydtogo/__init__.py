@@ -2,30 +2,33 @@
 """Whyd To Go - Take your Whyd playlists away.
 
 Usage:
-  whydtogo user <username> [-s|-t|-l] [-p, -d]
+  whydtogo user <username> [-s|-t|-l] [-p, -d, -e <provider>...]
   whydtogo playlist <url>... [-p, -d]
 
 Options:
   -h --help          Show this message
   <username>         Username to scrap
   <url>              URL to parse
-  -t --total        Fetch all user tracks (caution!)
+  -t --total         Fetch all user tracks (caution!)
   -s --stream        Fetch user stream (last tracks)
   -l --likes         Fetch user likes (last tracks)
   -p --print         Just print tracks, do not download them
   -d --debug         Enable debug mode
+  -e --exclude       Exclude one or more providers (not yet implemented)
 """
+from __future__ import (absolute_import, division,
+                        print_function, unicode_literals)
+from builtins import *
 
 import logging
 
 from docopt import docopt
+from slugify import slugify
+from .scraper import WhydScraper
 
-from scraper import WhydScraper
 
-
-__author__ = "Julien Tanay"
-
-__version__ = "0.3.0"
+__author__ = 'Julien Tanay'
+__version__ = '0.3.3'
 VERSION = __version__
 
 
@@ -43,7 +46,8 @@ def main():
             for track in tracklist:
                 ws.download(
                     track['url'],
-                    outdir='{user}_likes'.format(user=args['<username>']),
+                    outdir=slugify('{user}_likes'.format(
+                        user=args['<username>'])),
                     dry_run=args['--print'])
 
         elif args['--stream']:
@@ -51,7 +55,7 @@ def main():
             for track in tracklist:
                 ws.download(
                     track['url'],
-                    outdir=args['<username>'],
+                    outdir=slugify(args['<username>']),
                     dry_run=args['--print'])
 
         elif args['--total']:
@@ -59,7 +63,7 @@ def main():
             for track in tracklist:
                     ws.download(
                         track['url'],
-                        outdir=args['<username>'],
+                        outdir=slugify(args['<username>']),
                         dry_run=args['--print'])
 
         else:
@@ -70,7 +74,7 @@ def main():
                 for track in playlist:
                         ws.download(
                             track['url'],
-                            outdir=track['playlist'],
+                            outdir=slugify(track['playlist']),
                             dry_run=args['--print'])
 
     elif args['playlist']:
@@ -80,7 +84,7 @@ def main():
             for track in playlist:
                 ws.download(
                     track['url'],
-                    outdir=track['playlist'],
+                    outdir=slugify(track['playlist']),
                     dry_run=args['--print'])
 
 
