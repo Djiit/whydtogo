@@ -9,9 +9,11 @@ python:
   # - "3.5"
   # - "nightly"
 
-install: "pip install -e ."
+install:
+  - "pip install -e ."
+  - "pip install pytest-cov coveralls"
 
-script: py.test
+script: "py.test --cov-report= --cov=whydtogo"
 
 deploy:
   provider: pypi
