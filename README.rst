@@ -11,13 +11,13 @@ About
 This is a very simple comand-line wrapper around youtube-dl for Whyd
 using BeautifulSoup4, requests and docopt.
 
-This project is still unstable. Many thanks to the
-`Whyd <https://whyd.com>`__ for their support.
+Many thanks to the
+`Whyd <https://whyd.com>`__ team for their support.
 
 Usage
 -----
 
-Check the built-in help message : ``whydtogo --help``
+Check the built-in help: ``whydtogo --help``
 
 For development usage use ``python whydtogo/__init__.py --help``
 
@@ -31,7 +31,7 @@ Don't want to install anything ? Use this automatically generated
 Installation (all platforms)
 ----------------------------
 
-You will need (obviously) Python 3.X up to 3.4 and pip. Python 3.4 comes bundled
+You will need (obviously) Python 3.X and pip. Python 3.4 comes bundled
 with pip. For earlier Python version, check how to install pip here :
 https://pip.pypa.io/en/latest/installing.html.
 
