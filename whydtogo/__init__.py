@@ -1,92 +1,83 @@
-# -*- coding: utf8 -*-
-"""Whyd To Go - Take your Whyd playlists away.
-
-Usage:
-  whydtogo user <username> [-s|-t|-l] [-p, -d, -e <provider>...]
-  whydtogo playlist <url>... [-p, -d]
-
-Options:
-  -h --help          Show this message
-  <username>         Username to scrap
-  <url>              URL to parse
-  -t --total         Fetch all user tracks (caution!)
-  -s --stream        Fetch user stream (last tracks)
-  -l --likes         Fetch user likes (last tracks)
-  -p --print         Just print tracks, do not download them
-  -d --debug         Enable debug mode
-  -e --exclude       Exclude one or more providers (not yet implemented)
-"""
+# coding: utf8
 from __future__ import (absolute_import, division,
                         print_function, unicode_literals)
 from builtins import *
 
 import logging
 
-from docopt import docopt
+import click
 from slugify import slugify
-from .scraper import WhydScraper
+from whydtogo.scraper import WhydScraper
 
 
 __author__ = 'Julien Tanay'
-__version__ = '0.3.6'
+__version__ = '0.4.0'
 VERSION = __version__
 
-
+@click.group()
 def main():
-    """ Main Whyd To Go CLI entry point."""
-    args = docopt(__doc__)
+    pass
 
-    if args['--debug']:
-        logging.getLogger().setLevel(logging.DEBUG)
-
+@main.command()
+@click.argument('username')
+@click.option('--likes', default=False, help='Fetch user likes (last tracks)')
+@click.option('--stream', default=False, help='Fetch user stream (last tracks)')
+@click.option('--total', default=False, help='Fetch all user tracks (caution!)')
+@click.option('--dryrun', default=False, help='Only print the result')
+def user(username, likes, stream, total, dryrun):
     ws = WhydScraper()
-    if args['user']:
-        if args['--likes']:
-            tracklist = ws.get_user_likes(args['<username>'])
-            for track in tracklist:
+    if likes:
+        tracklist = ws.get_user_likes(username)
+        for track in tracklist:
+            ws.download(
+                track['url'],
+                outdir=slugify('{user}_likes'.format(
+                    user=username)),
+                dry_run=dryrun)
+
+    elif stream:
+        tracklist = ws.get_user_stream(username)
+        for track in tracklist:
+            ws.download(
+                track['url'],
+                outdir=slugify(username),
+                dry_run=dryrun)
+
+    elif total:
+        tracklist = ws.get_user_stream(username, limit='3000')
+        for track in tracklist:
                 ws.download(
                     track['url'],
-                    outdir=slugify('{user}_likes'.format(
-                        user=args['<username>'])),
-                    dry_run=args['--print'])
+                    outdir=slugify(username),
+                    dry_run=dryrun)
 
-        elif args['--stream']:
-            tracklist = ws.get_user_stream(args['<username>'])
-            for track in tracklist:
-                ws.download(
-                    track['url'],
-                    outdir=slugify(args['<username>']),
-                    dry_run=args['--print'])
-
-        elif args['--total']:
-            tracklist = ws.get_user_stream(args['<username>'], limit='3000')
-            for track in tracklist:
-                    ws.download(
-                        track['url'],
-                        outdir=slugify(args['<username>']),
-                        dry_run=args['--print'])
-
-        else:
-            for playlist_id in ws.scrap_playlists(args['<username>']):
-                playlist = ws.get_playlist_by_id(
-                    args['<username>'], playlist_id)
-
-                for track in playlist:
-                        ws.download(
-                            track['url'],
-                            outdir=slugify(track['playlist']),
-                            dry_run=args['--print'])
-
-    elif args['playlist']:
-        for url in args['<url>']:
-            playlist = ws.get_playlist_by_url(url)
+    else:
+        for playlist_id in ws.scrap_playlists(username):
+            playlist = ws.get_playlist_by_id(
+                username, playlist_id)
 
             for track in playlist:
-                ws.download(
-                    track['url'],
-                    outdir=slugify(track['playlist']),
-                    dry_run=args['--print'])
+                    ws.download(
+                        track['url'],
+                        outdir=slugify(track['playlist']),
+                        dry_run=dryrun)
+    return
 
+
+@main.command()
+@click.argument('urls', nargs=-1)
+@click.option('--dryrun', help='Only print the result')
+def playlist(url, print):
+    ws = WhydScraper()
+    for url in urls:
+        playlist = ws.get_playlist_by_url(url)
+
+        for track in playlist:
+            ws.download(
+                track['url'],
+                outdir=slugify(track['playlist']),
+                dry_run=dryrun)
+    return
 
 if __name__ == '__main__':
     main()
