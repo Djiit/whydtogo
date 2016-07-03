@@ -11,7 +11,7 @@ from whydtogo.scraper import WhydScraper
 
 
 __author__ = 'Julien Tanay'
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 VERSION = __version__
 
 @click.group()
