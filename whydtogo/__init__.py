@@ -67,7 +67,7 @@ def user(username, likes, stream, total, dryrun):
 @main.command()
 @click.argument('urls', nargs=-1)
 @click.option('--dryrun', help='Only print the result')
-def playlist(url, print):
+def playlist(urls, dryrun):
     ws = WhydScraper()
     for url in urls:
         playlist = ws.get_playlist_by_url(url)
